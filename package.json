@@ -1,0 +1,17 @@
+{
+  "name": "habittracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "backend": "npm run server --prefix backend",
+    "frontend": "npm run client --prefix frontend",
+    "dev": "concurrently \"npm run backend \" \"npm run frontend \"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
