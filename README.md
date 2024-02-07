@@ -30,3 +30,7 @@ Create HabitTracker which has following functionality:
 4. Store token in localstorage for now
 5. Validate JWT Token
 6. Once validated, allows CRUD Operations
+
+### Questions
+
+1. When generating the JWT Token, what do you want to encode ?
