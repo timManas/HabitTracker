@@ -17,7 +17,7 @@ const verifyLogin = asyncHandler(async (req, res) => {
     console.log('password same')
 
     const token = jwt.sign(
-      { email, name, test: 'test1234' },
+      { email, name, sub: 'test1234' },
       process.env.JWT_SECRET
     )
     console.log('token: ' + token)
@@ -33,4 +33,8 @@ const getUserInfo = asyncHandler((req, res) => {
   res.send('User Info')
 })
 
-export { getUserInfo, verifyLogin }
+const getProtectedPage = asyncHandler((req, res) => {
+  res.send('ProtectedPage')
+})
+
+export { getUserInfo, verifyLogin, getProtectedPage }

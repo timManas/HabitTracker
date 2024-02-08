@@ -31,6 +31,19 @@ Create HabitTracker which has following functionality:
 5. Validate JWT Token
 6. Once validated, allows CRUD Operations
 
+### Lessons learnd
+
+1. If you dont know what inside the req, output it on the console.
+2. If findOne() or find() its returning a promise, add a await to get the document
+3. Use middleware to handle the token verification
+4. To create JWT Token, you will to:
+
+- sign it
+- Add payload and JWT_SECRET
+- Send token back to the client
+
 ### Questions
 
 1. When generating the JWT Token, what do you want to encode ?
+
+- The base functionalities
