@@ -42,6 +42,10 @@ Create HabitTracker which has following functionality:
 - Add payload and JWT_SECRET
 - Send token back to the client
 
+5. Collection name is determined by the Model name + 's'
+   Ex: 'Habit' is habits collection in mongodb
+   'Product' is products collection in mongodb
+
 ### Questions
 
 1. When generating the JWT Token, what do you want to encode ?
