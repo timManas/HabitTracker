@@ -2,7 +2,6 @@ import asyncHandler from 'express-async-handler'
 import User from '../models/userModel.js'
 import Habit from '../models/habitModel.js'
 import jwt from 'jsonwebtoken'
-import mongoose from 'mongoose'
 
 const verifyLogin = asyncHandler(async (req, res) => {
   //   console.log(req.body)
@@ -33,12 +32,31 @@ const verifyLogin = asyncHandler(async (req, res) => {
   res.sendStatus(500)
 })
 
-const getUserInfo = asyncHandler((req, res) => {
-  res.send('User Info')
-})
+const createUserEntry = asyncHandler(async (req, res) => {
+  const token = req.headers.authorization.split(' ')[1]
+  const { _id } = jwt.verify(token, process.env.JWT_SECRET)
 
-const getProtectedPage = asyncHandler((req, res) => {
-  // res.send('ProtectedPage')
+  const title = String(req.body.title)
+  const priority = Number(req.body.priority)
+  const description = String(req.body.description)
+
+  // Add new Entry inside Array
+  await Habit.findOneAndUpdate(
+    { user: _id },
+    {
+      $push: {
+        habitsList: {
+          title,
+          priority,
+          description,
+        },
+      },
+    },
+    { new: true }
+  )
+
+  const entry = await Habit.findOne({ user: _id })
+  res.send(entry)
 })
 
 const getUserEntry = asyncHandler(async (req, res) => {
@@ -61,8 +79,9 @@ const updateUserEntry = asyncHandler(async (req, res) => {
   await Habit.findOneAndUpdate(
     { user: _id, 'habitsList._id': entryId },
     {
-      'habitsList.$.title': updatedTitle,
-      'habitsList.$.description': updatedDescription,
+      $push: {
+        habitsList: { title: updatedTitle, description: updatedDescription },
+      },
     },
     {
       new: true,
@@ -74,16 +93,27 @@ const updateUserEntry = asyncHandler(async (req, res) => {
   res.send(entry)
 })
 
-const createUserEntry = asyncHandler(async (req, res) => {})
-
 const deleteEntry = asyncHandler(async (req, res) => {
-  res.send('deleteEntry')
+  const token = req.headers.authorization.split(' ')[1]
+  const { _id } = jwt.verify(token, process.env.JWT_SECRET)
+
+  const entryId = req.body.entryId
+  console.log('entryId: ' + entryId)
+
+  await Habit.findOneAndUpdate(
+    {
+      user: _id,
+    },
+    { $pull: { habitsList: { _id: entryId } } },
+    { new: true }
+  )
+
+  const entry = await Habit.findOne({ user: _id })
+  res.send(entry)
 })
 
 export {
-  getUserInfo,
   verifyLogin,
-  getProtectedPage,
   createUserEntry,
   getUserEntry,
   updateUserEntry,

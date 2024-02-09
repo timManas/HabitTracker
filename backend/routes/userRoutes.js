@@ -1,8 +1,6 @@
 import express from 'express'
 import {
-  getUserInfo,
   verifyLogin,
-  getProtectedPage,
   createUserEntry,
   getUserEntry,
   updateUserEntry,

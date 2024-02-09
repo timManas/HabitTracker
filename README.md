@@ -46,6 +46,9 @@ Create HabitTracker which has following functionality:
    Ex: 'Habit' is habits collection in mongodb
    'Product' is products collection in mongodb
 
+6. $push - to push new changes to mongoDB
+7. $pull - to remove entries in mongoDB
+
 ### Questions
 
 1. When generating the JWT Token, what do you want to encode ?
