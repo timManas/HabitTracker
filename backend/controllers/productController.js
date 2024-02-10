@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 
-const getAllProducts = asyncHandler((req, res) => {
+const getAllProducts = asyncHandler(async (req, res) => {
+  console.log('Fetch All Products')
   res.send('HomePage Controllers')
 })
 

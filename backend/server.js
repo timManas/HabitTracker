@@ -8,11 +8,13 @@ import passportjwt, { ExtractJwt } from 'passport-jwt'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 const PORT = 5000
 const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(cors())
 
 app.use(passport.initialize())
 const jwtStrategy = passportjwt.Strategy
@@ -37,6 +39,7 @@ app.use(express.json())
 
 app.use('/products', productRouter)
 app.use('/auth', userRouter)
+app.use('/', (req, res) => res.send('API Running'))
 
 app.listen(PORT, () => {
   console.log(`App listenining on PORT: ${PORT}`)

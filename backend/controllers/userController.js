@@ -4,7 +4,7 @@ import Habit from '../models/habitModel.js'
 import jwt from 'jsonwebtoken'
 
 const verifyLogin = asyncHandler(async (req, res) => {
-  //   console.log(req.body)
+  console.log(req.body)
   // Fetch user and email from request
   const emailEntered = String(req.body.email)
   const passwordEntered = String(req.body.password)
