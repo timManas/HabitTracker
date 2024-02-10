@@ -8,9 +8,15 @@ const userSlice = createSlice({
     email: '',
   },
   reducers: {
-    setId: (state, action) => (state.id = action.payload),
-    setName: (state, action) => (state.name = action.payload),
-    setEmail: (state, action) => (state.email = action.payload),
+    setId: (state, action) => {
+      state.id = action.payload
+    },
+    setName: (state, action) => {
+      state.name = action.payload
+    },
+    setEmail: (state, action) => {
+      state.email = action.payload
+    },
   },
 })
 

@@ -3,28 +3,38 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/esm/Container'
 import axios from 'axios'
-import asyncHandler from 'express-async-handler'
+import { useDispatch } from 'react-redux'
+import { setId, setName, setEmail } from '../slices/userSlice.jsx'
+import { jwtDecode } from 'jwt-decode'
 
 const LoginPage = () => {
-  const [email, setEmail] = useState()
+  const [emailEntered, setEmailEntered] = useState()
   const [password, setPassword] = useState()
+  const dispatch = useDispatch()
 
   const submitHandler = (event) => {
     event.preventDefault()
-    console.log(`email: ${email}    password: ${password}`)
-    fetchToken(email, password)
+    console.log(`email: ${emailEntered}    password: ${password}`)
+    fetchToken(emailEntered, password)
   }
 
-  const fetchToken = asyncHandler(async () => {
-    //localhost:5000/auth/login
-    await axios
-      .post('http://localhost:5000/auth/login', { email, password })
-      .then((res) => {
-        console.log('response: ' + JSON.stringify(res.data))
-        localStorage.setItem('token', res.data)
-      })
-      .catch((err) => console.log('error: ' + err))
-  })
+  const fetchToken = async () => {
+    const res = await axios.post('http://localhost:5000/auth/login', {
+      email: emailEntered,
+      password,
+    })
+
+    const { _id, name: nameToken, email: emailToken } = jwtDecode(res.data)
+    console.log(
+      `id: ${_id}   emailToken: ${emailToken}    nameToken: ${nameToken}`
+    )
+    // // Update Store
+    dispatch(setId(_id))
+    dispatch(setName(nameToken))
+    dispatch(setEmail(emailToken))
+
+    localStorage.setItem('token', res.data)
+  }
 
   return (
     <Container>
@@ -34,8 +44,8 @@ const LoginPage = () => {
           <Form.Control
             type='email'
             placeholder='Enter email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={emailEntered}
+            onChange={(e) => setEmailEntered(e.target.value)}
           />
         </Form.Group>
 
