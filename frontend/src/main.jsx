@@ -13,6 +13,8 @@ import LoginPage from './screens/LoginPage.jsx'
 import HabitsPage from './screens/HabitsPage.jsx'
 import AccountsPage from './screens/AccountsPage.jsx'
 import SettingsPage from './screens/SettingsPage.jsx'
+import { Provider } from 'react-redux'
+import store from './store.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,7 +32,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router}>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </RouterProvider>
   </React.StrictMode>
 )
