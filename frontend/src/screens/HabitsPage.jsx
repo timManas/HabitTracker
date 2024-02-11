@@ -26,7 +26,33 @@ const HabitsPage = () => {
     console.log(result.data)
   }
 
-  const submitHandler = () => {}
+  const submitNewEntry = async (event) => {
+    event.preventDefault()
+
+    console.log(localStorage.getItem('token'))
+
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    }
+
+    // Submit New Entry
+    await axios
+      .post(
+        'http://localhost:5000/auth/entry',
+        {
+          title: titleEntered,
+          priority: Number(priorityEntered),
+          description: descriptionEntered,
+        },
+        { headers }
+      )
+      .then((result) => {
+        console.log('result: ' + JSON.stringify(result))
+        setHabits(result.data.habitsList)
+      })
+      .catch((error) => console.log(error))
+  }
 
   return (
     <Container>
@@ -38,20 +64,21 @@ const HabitsPage = () => {
                 <Card.Title>{currentHabbit.title}</Card.Title>
                 <Card.Text>{currentHabbit.description}</Card.Text>
                 <Button variant='primary'>Edit</Button>
+                <Button variant='primary'>Delete</Button>
               </Card.Body>
             </Card>
           ))}
         </Col>
 
         <Col>
-          <Form onSubmit={submitHandler}>
+          <Form onSubmit={submitNewEntry}>
             <Form.Group className='mb-3' controlId='formTitle'>
               <Form.Label>Enter Title</Form.Label>
               <Form.Control
                 type='text'
                 placeholder='Enter Title'
                 value={titleEntered}
-                onChange={(event) => setTitleEntered(event)}
+                onChange={(event) => setTitleEntered(event.target.value)}
               />
             </Form.Group>
 
@@ -61,7 +88,7 @@ const HabitsPage = () => {
                 type='text'
                 placeholder='Enter Priority'
                 value={priorityEntered}
-                onChange={(event) => setPriorityEntered(event)}
+                onChange={(event) => setPriorityEntered(event.target.value)}
               />
             </Form.Group>
 
@@ -69,9 +96,9 @@ const HabitsPage = () => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 type='text'
-                placeholder='Description'
+                placeholder='Enter Description'
                 value={descriptionEntered}
-                onChange={(event) => setDescriptioEnteredn(event)}
+                onChange={(event) => setDescriptioEnteredn(event.target.value)}
               />
             </Form.Group>
             <Button variant='primary' type='submit'>
