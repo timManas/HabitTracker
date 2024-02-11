@@ -73,19 +73,24 @@ const updateUserEntry = asyncHandler(async (req, res) => {
   // Fetch the updated Habit info from the request
   const entryId = String(req.body.entryId)
   const updatedTitle = String(req.body.updatedTitle)
+  const updatedPriority = String(req.body.updatedPriority)
   const updatedDescription = String(req.body.updatedDescription)
 
   // Find array and modify the object inside the array
+  console.log(
+    `_id: ${_id}     entryId: ${entryId}    updatedTitle: ${updatedTitle}   updatedDesc: ${updatedDescription}`
+  )
+
   await Habit.findOneAndUpdate(
     { user: _id, 'habitsList._id': entryId },
     {
-      $push: {
-        habitsList: { title: updatedTitle, description: updatedDescription },
+      $set: {
+        'habitsList.$.title': updatedTitle,
+        'habitsList.$.priority': updatedPriority,
+        'habitsList.$.description': updatedDescription,
       },
     },
-    {
-      new: true,
-    }
+    { new: true }
   )
 
   const entry = await Habit.findOne({ user: _id })
