@@ -54,6 +54,30 @@ const HabitsPage = () => {
       .catch((error) => console.log(error))
   }
 
+  const deleteEntry = async (id) => {
+    console.log(`id: ${id}`)
+
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    }
+
+    // Delete Entry
+    await axios
+      .delete('http://localhost:5000/auth/entry', {
+        headers: headers,
+        data: {
+          entryId: id,
+        },
+      })
+      .then((result) => {
+        console.log('result: ' + JSON.stringify(result))
+        setHabits(result.data.habitsList)
+        console.log('deleted Item')
+      })
+      .catch((error) => console.log(error))
+  }
+
   return (
     <Container>
       <Row>
@@ -64,7 +88,14 @@ const HabitsPage = () => {
                 <Card.Title>{currentHabbit.title}</Card.Title>
                 <Card.Text>{currentHabbit.description}</Card.Text>
                 <Button variant='primary'>Edit</Button>
-                <Button variant='primary'>Delete</Button>
+                <Button
+                  variant='primary'
+                  onClick={() => {
+                    deleteEntry(currentHabbit._id)
+                  }}
+                >
+                  Delete
+                </Button>
               </Card.Body>
             </Card>
           ))}
