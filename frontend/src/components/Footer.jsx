@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <Navbar bg='light' data-bs-theme='light'>
       <Nav className='me-auto'>
-        <Nav.Link href='#home'>Home</Nav.Link>
-        <Nav.Link href='#link'>Link</Nav.Link>
+        <Nav.Link>About</Nav.Link>
+        <Nav.Link>Policy</Nav.Link>
       </Nav>
     </Navbar>
   )

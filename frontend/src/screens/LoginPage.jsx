@@ -6,11 +6,14 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { setId, setName, setEmail } from '../slices/userSlice.jsx'
 import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
 
 const LoginPage = () => {
-  const [emailEntered, setEmailEntered] = useState()
-  const [password, setPassword] = useState()
+  const [emailEntered, setEmailEntered] = useState('')
+  const [password, setPassword] = useState('')
   const dispatch = useDispatch()
+
+  const navigate = useNavigate()
 
   const submitHandler = (event) => {
     event.preventDefault()
@@ -28,12 +31,16 @@ const LoginPage = () => {
     console.log(
       `id: ${_id}   emailToken: ${emailToken}    nameToken: ${nameToken}`
     )
-    // // Update Store
+    // Update Store
     dispatch(setId(_id))
     dispatch(setName(nameToken))
     dispatch(setEmail(emailToken))
 
+    // Store in local storage
     localStorage.setItem('token', res.data)
+
+    // Navigate back to homepage
+    navigate('/')
   }
 
   return (
