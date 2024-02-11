@@ -8,6 +8,8 @@ const HabitsPage = () => {
   const [titleEntered, setTitleEntered] = useState('')
   const [priorityEntered, setPriorityEntered] = useState(0)
   const [descriptionEntered, setDescriptioEnteredn] = useState('')
+  const [habitId, setHabitId] = useState(0)
+  const [isUpdated, setIsUpdated] = useState(false)
   // const user = useSelector((state) => state.user.id)
   // const name = useSelector((state) => state.user.name)
   // const email = useSelector((state) => state.user.email)
@@ -54,6 +56,55 @@ const HabitsPage = () => {
       .catch((error) => console.log(error))
   }
 
+  const updateEntry = async (habit) => {
+    const { _id, title, priority, description } = habit
+    console.log(
+      `id: ${_id}   title: ${title}   priority:${priority}   description: ${description}`
+    )
+
+    setHabitId(_id)
+    setTitleEntered(title)
+    setPriorityEntered(priority)
+    setDescriptioEnteredn(description)
+    setIsUpdated(true)
+  }
+
+  const submitEditEntry = async (event) => {
+    event.preventDefault()
+    console.log(localStorage.getItem('token'))
+
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json',
+    }
+
+    // Submit New Entry
+    await axios
+      .put(
+        'http://localhost:5000/auth/entry',
+        {
+          entryId: habitId,
+          updatedTitle: titleEntered,
+          updatedPriority: Number(priorityEntered),
+          updatedDescription: descriptionEntered,
+        },
+        { headers }
+      )
+      .then((result) => {
+        console.log('Edit result: ' + JSON.stringify(result.data.habitsList))
+        setHabits(result.data.habitsList)
+        console.log('Edit Complete')
+
+        // Reset
+        setHabitId(0)
+        setTitleEntered('')
+        setPriorityEntered(0)
+        setDescriptioEnteredn('')
+        setIsUpdated(false)
+      })
+      .catch((error) => console.log(error))
+  }
+
   const deleteEntry = async (id) => {
     console.log(`id: ${id}`)
 
@@ -78,6 +129,15 @@ const HabitsPage = () => {
       .catch((error) => console.log(error))
   }
 
+  const cancelDeletEntry = (event) => {
+    event.preventDefault()
+    setHabitId(0)
+    setTitleEntered('')
+    setPriorityEntered(0)
+    setDescriptioEnteredn('')
+    setIsUpdated(false)
+  }
+
   return (
     <Container>
       <Row>
@@ -87,7 +147,14 @@ const HabitsPage = () => {
               <Card.Body>
                 <Card.Title>{currentHabbit.title}</Card.Title>
                 <Card.Text>{currentHabbit.description}</Card.Text>
-                <Button variant='primary'>Edit</Button>
+                <Button
+                  variant='primary'
+                  onClick={() => {
+                    updateEntry(currentHabbit)
+                  }}
+                >
+                  Edit
+                </Button>
                 <Button
                   variant='primary'
                   onClick={() => {
@@ -102,40 +169,96 @@ const HabitsPage = () => {
         </Col>
 
         <Col>
-          <Form onSubmit={submitNewEntry}>
-            <Form.Group className='mb-3' controlId='formTitle'>
-              <Form.Label>Enter Title</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter Title'
-                value={titleEntered}
-                onChange={(event) => setTitleEntered(event.target.value)}
-              />
-            </Form.Group>
+          {!isUpdated ? (
+            <>
+              <Form onSubmit={submitNewEntry}>
+                <Form.Group className='mb-3' controlId='formTitle'>
+                  <Form.Label>Enter Title</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Title'
+                    value={titleEntered}
+                    onChange={(event) => setTitleEntered(event.target.value)}
+                  />
+                </Form.Group>
 
-            <Form.Group className='mb-3' controlId='formPriority'>
-              <Form.Label>Enter Priority</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter Priority'
-                value={priorityEntered}
-                onChange={(event) => setPriorityEntered(event.target.value)}
-              />
-            </Form.Group>
+                <Form.Group className='mb-3' controlId='formPriority'>
+                  <Form.Label>Enter Priority</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Priority'
+                    value={priorityEntered}
+                    onChange={(event) => setPriorityEntered(event.target.value)}
+                  />
+                </Form.Group>
 
-            <Form.Group className='mb-3' controlId='formDescription'>
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                type='text'
-                placeholder='Enter Description'
-                value={descriptionEntered}
-                onChange={(event) => setDescriptioEnteredn(event.target.value)}
-              />
-            </Form.Group>
-            <Button variant='primary' type='submit'>
-              Submit
-            </Button>
-          </Form>
+                <Form.Group className='mb-3' controlId='formDescription'>
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Enter Description'
+                    value={descriptionEntered}
+                    onChange={(event) =>
+                      setDescriptioEnteredn(event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Button variant='primary' type='submit'>
+                  Submit
+                </Button>
+              </Form>
+            </>
+          ) : (
+            <>
+              <Form>
+                <Form.Group className='mb-3' controlId='formTitle'>
+                  <Form.Label>Edit Title</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Edit Title'
+                    value={titleEntered}
+                    onChange={(event) => setTitleEntered(event.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className='mb-3' controlId='formPriority'>
+                  <Form.Label>Edit Priority</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Edit Priority'
+                    value={priorityEntered}
+                    onChange={(event) => setPriorityEntered(event.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className='mb-3' controlId='formDescription'>
+                  <Form.Label>EditDescription</Form.Label>
+                  <Form.Control
+                    type='text'
+                    placeholder='Edit Description'
+                    value={descriptionEntered}
+                    onChange={(event) =>
+                      setDescriptioEnteredn(event.target.value)
+                    }
+                  />
+                </Form.Group>
+                <Button
+                  variant='primary'
+                  type='submit'
+                  onClick={submitEditEntry}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant='secondary'
+                  type='submit'
+                  onClick={cancelDeletEntry}
+                >
+                  Cancel
+                </Button>
+              </Form>
+            </>
+          )}
         </Col>
       </Row>
     </Container>
