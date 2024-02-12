@@ -1,6 +1,5 @@
 import { Row, Col, Container, Button, Form, Card } from 'react-bootstrap'
 import { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import axios from 'axios'
 
 const HabitsPage = () => {
@@ -18,11 +17,14 @@ const HabitsPage = () => {
     fetchData()
   }, [setHabits])
 
+  const headers = {
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json',
+  }
+
   const fetchData = async () => {
     const result = await axios.get('http://localhost:5000/auth/entry', {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
+      headers,
     })
     setHabits(result.data)
     console.log(result.data)
@@ -32,11 +34,6 @@ const HabitsPage = () => {
     event.preventDefault()
 
     console.log(localStorage.getItem('token'))
-
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
-    }
 
     // Submit New Entry
     await axios
@@ -52,6 +49,7 @@ const HabitsPage = () => {
       .then((result) => {
         console.log('result: ' + JSON.stringify(result))
         setHabits(result.data.habitsList)
+        resetFields()
       })
       .catch((error) => console.log(error))
   }
@@ -73,11 +71,6 @@ const HabitsPage = () => {
     event.preventDefault()
     console.log(localStorage.getItem('token'))
 
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
-    }
-
     // Submit New Entry
     await axios
       .put(
@@ -96,22 +89,13 @@ const HabitsPage = () => {
         console.log('Edit Complete')
 
         // Reset
-        setHabitId(0)
-        setTitleEntered('')
-        setPriorityEntered(0)
-        setDescriptioEnteredn('')
-        setIsUpdated(false)
+        resetFields()
       })
       .catch((error) => console.log(error))
   }
 
   const deleteEntry = async (id) => {
     console.log(`id: ${id}`)
-
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
-    }
 
     // Delete Entry
     await axios
@@ -131,6 +115,10 @@ const HabitsPage = () => {
 
   const cancelDeletEntry = (event) => {
     event.preventDefault()
+    resetFields()
+  }
+
+  const resetFields = () => {
     setHabitId(0)
     setTitleEntered('')
     setPriorityEntered(0)
